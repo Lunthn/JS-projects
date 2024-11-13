@@ -34,7 +34,7 @@ const initialBoard = [
 // input
 numberCellElements.forEach((numberCell) => {
   numberCell.addEventListener("change", () => {
-    if (Number(numberCell.value) > 9 || Number(numberCell.value < 0)) {
+    if (Number(numberCell.value) > 9 || Number(numberCell.value <= 0)) {
       console.log("number is out of range");
       numberCell.value = "";
     } else if (numberCell.value !== "") {

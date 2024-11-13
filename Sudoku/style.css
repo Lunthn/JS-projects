@@ -61,39 +61,38 @@ body {
   width: 100%;
   height: 100%;
   border: none;
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: medium;
   font-weight: bold;
   transition: all 0.2s ease;
   text-align: center;
 }
 
-.number-input:hover{
-    background-color: hsl(0, 0%, 25%);
+.number-input:hover {
+  background-color: hsl(0, 0%, 25%);
 }
 
-
-.game-buttons{
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
+.game-buttons {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
 }
 
-.game-buttons button{
-    padding: 10px 20px;
-    border: none;
-    border-radius: 10px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: large;
-    font-weight: bold;
-    background-color: hsl(0, 0%, 30%);
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
+.game-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-family: "Montserrat", sans-serif;
+  font-size: large;
+  font-weight: bold;
+  background-color: hsl(0, 0%, 30%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.game-buttons button:hover{
-    background-color: hsl(0, 0%, 25%);
+.game-buttons button:hover {
+  background-color: hsl(0, 0%, 25%);
 }
 
 input::-webkit-outer-spin-button,

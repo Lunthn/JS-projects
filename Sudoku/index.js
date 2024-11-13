@@ -1,100 +1,52 @@
-//to do: draw the board
-//to do: generate initial board
-//to do: solved the initial board
+//to-do
+//save progess?
+//animate auto solving
 
-const numberCellElements = document.querySelectorAll(".number-input");
 const sudokuStatusElement = document.getElementById("status-sudoku");
+const sudokuContainer = document.querySelector(".game-container");
 
-// solved sudoku, to test functions
-let currentBoard = [
-  [5, 3, 4, 6, 7, 8, 9, 1, 2],
-  [6, 7, 2, 1, 9, 5, 3, 4, 8],
-  [1, 9, 8, 3, 4, 2, 5, 6, 7],
-  [8, 5, 9, 7, 6, 1, 4, 2, 3],
-  [4, 2, 6, 8, 5, 3, 7, 9, 1],
-  [7, 1, 3, 9, 2, 4, 8, 5, 6],
-  [9, 6, 1, 5, 3, 7, 2, 8, 4],
-  [2, 8, 7, 4, 1, 9, 6, 3, 5],
-  [3, 4, 5, 2, 8, 6, 1, 7, 9],
-];
+let currentBoard = [];
+let initialBoard = [];
 
-// board at the start, what player will start with
-const initialBoard = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-];
-
-// input
-numberCellElements.forEach((numberCell) => {
-  numberCell.addEventListener("change", () => {
-    if (Number(numberCell.value) > 9 || Number(numberCell.value <= 0)) {
-      console.log("number is out of range");
-      numberCell.value = "";
-    } else if (numberCell.value !== "") {
-
-      //change current board here
-    }
-
-    drawBoard();
-  });
-});
-
-function clearBoardCells() {
-  numberCellElements.forEach((numberCell) => {
-    numberCell.value = "";
-  });
-
-  //set current board to initial board here
-
+function backToInitial() {
+  currentBoard = initialBoard.map((row) => row.slice());
   drawBoard();
+  checkIfSolved();
 }
 
 function validateRows() {
-  for (let j = 0; j < 9; j++) {
-    let usedChars = [];
-    for (let i = 0; i < 9; i++) {
-      if (usedChars.includes(currentBoard[j][i])) {
-        return false;
-      } else {
-        usedChars.push(currentBoard[j][i]);
-      }
+  for (let row = 0; row < 9; row++) {
+    let usedNumbers = new Set();
+    for (let col = 0; col < 9; col++) {
+      const value = currentBoard[row][col];
+      if (value && usedNumbers.has(value)) return false;
+      usedNumbers.add(value);
     }
   }
   return true;
 }
 
 function validateColumns() {
-  for (let j = 0; j < 9; j++) {
-    let usedChars = [];
-    for (let i = 0; i < 9; i++) {
-      if (usedChars.includes(currentBoard[i][j])) {
-        return false;
-      } else {
-        usedChars.push(currentBoard[i][j]);
-      }
+  for (let col = 0; col < 9; col++) {
+    let usedNumbers = new Set();
+    for (let row = 0; row < 9; row++) {
+      const value = currentBoard[row][col];
+      if (value && usedNumbers.has(value)) return false;
+      usedNumbers.add(value);
     }
   }
   return true;
 }
 
 function validateCells() {
-  for (let i = 0; i < 9; i += 3) {
-    for (let j = 0; j < 9; j += 3) {
-      let usedChars = [];
-      for (let x = i; x < i + 3; x++) {
-        for (let y = j; y < j + 3; y++) {
-          if (usedChars.includes(currentBoard[x][y])) {
-            return false;
-          } else {
-            usedChars.push(currentBoard[x][y]);
-          }
+  for (let boxRow = 0; boxRow < 9; boxRow += 3) {
+    for (let boxCol = 0; boxCol < 9; boxCol += 3) {
+      let usedNumbers = new Set();
+      for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) {
+          const value = currentBoard[boxRow + row][boxCol + col];
+          if (value && usedNumbers.has(value)) return false;
+          usedNumbers.add(value);
         }
       }
     }
@@ -103,40 +55,169 @@ function validateCells() {
 }
 
 function isBoardFull() {
-  for (let i = 0; i < 9; i++) {
-    for (let j = 0; j < 9; j++) {
-      if (currentBoard[i][j] == 0) {
-        return false;
-      }
-    }
-  }
-  return true;
+  return currentBoard.every((row) => row.every((value) => value !== 0));
 }
 
 function checkIfSolved() {
   if (validateRows() && validateColumns() && validateCells() && isBoardFull()) {
-    console.log("solved");
+    sudokuStatusElement.style.color = "green";
+    sudokuStatusElement.textContent = "Sudoku has been completed";
     return true;
+  } else if (isBoardFull()) {
+    sudokuStatusElement.style.color = "red";
+    sudokuStatusElement.textContent = "The Sudoku has been filled in wrong";
+  } else {
+    sudokuStatusElement.style.color = "white";
+    sudokuStatusElement.textContent = "Complete the sudoku";
   }
   return false;
 }
 
 function drawBoard() {
-  if (checkIfSolved()) {
-    sudokuStatusElement.style.color = "green";
-    sudokuStatusElement.textContent = "Sudoku has been completed";
-  } else if (isBoardFull()) {
-    sudokuStatusElement.style.color = "red";
-    sudokuStatusElement.textContent = "The Sudoku has been filled in wrong";
-  }
-  else{
-    sudokuStatusElement.style.color = "white";
-    sudokuStatusElement.textContent = "Complete the sudoku";
+  sudokuContainer.innerHTML = "";
+
+  for (let i = 0; i < 9; i++) {
+    const rowContainer = document.createElement("div");
+    rowContainer.classList.add("cell");
+
+    for (let j = 0; j < 9; j++) {
+      const cell = document.createElement("div");
+      cell.classList.add("number");
+
+      const numberInput = document.createElement("input");
+      numberInput.classList.add("number-input");
+      numberInput.type = "number";
+      numberInput.min = 1;
+      numberInput.max = 9;
+
+      numberInput.value = currentBoard[i][j] || "";
+
+      if (initialBoard[i][j] !== 0) {
+        numberInput.style.backgroundColor = "hsl(0, 0%, 35%)";
+        numberInput.disabled = true;
+      } else {
+        numberInput.addEventListener("change", () => {
+          const value = Number(numberInput.value);
+          if (value >= 1 && value <= 9) {
+            currentBoard[i][j] = value;
+          } else {
+            numberInput.value = "";
+            currentBoard[i][j] = 0;
+          }
+          checkIfSolved();
+        });
+      }
+
+      cell.appendChild(numberInput);
+      rowContainer.appendChild(cell);
+    }
+    sudokuContainer.appendChild(rowContainer);
   }
 }
 
-//implement backtracking
-function generateInitialBoard() {}
+function generateInitialBoard() {
+  const board = Array.from({ length: 9 }, () => Array(9).fill(0));
 
-//implement backtracking
-function solveInitialBoard() {}
+  function isValid(num, row, col) {
+    for (let i = 0; i < 9; i++) {
+      if (board[row][i] === num || board[i][col] === num) return false;
+    }
+
+    const boxRow = Math.floor(row / 3) * 3;
+    const boxCol = Math.floor(col / 3) * 3;
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (board[boxRow + i][boxCol + j] === num) return false;
+      }
+    }
+    return true;
+  }
+
+  function solve() {
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        if (board[row][col] === 0) {
+          const numbers = Array.from({ length: 9 }, (_, k) => k + 1);
+          shuffle(numbers);
+          for (const num of numbers) {
+            if (isValid(num, row, col)) {
+              board[row][col] = num;
+              if (solve()) return true;
+              board[row][col] = 0;
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+
+  solve();
+
+  for (let k = 0; k < 20; k++) {
+    const row = Math.floor(Math.random() * 9);
+    const col = Math.floor(Math.random() * 9);
+    board[row][col] = 0;
+  }
+
+  initialBoard = board;
+  currentBoard = board.map((row) => row.slice());
+  backToInitial();
+}
+
+function solveInitialBoard() {
+  function isValid(num, row, col) {
+    for (let i = 0; i < 9; i++) {
+      if (currentBoard[row][i] === num) return false;
+    }
+
+    for (let i = 0; i < 9; i++) {
+      if (currentBoard[i][col] === num) return false;
+    }
+
+    const boxRow = Math.floor(row / 3) * 3;
+    const boxCol = Math.floor(col / 3) * 3;
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (currentBoard[boxRow + i][boxCol + j] === num) return false;
+      }
+    }
+
+    return true;
+  }
+
+  function solve() {
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        if (currentBoard[row][col] === 0) {
+          for (let num = 1; num <= 9; num++) {
+            if (isValid(num, row, col)) {
+              currentBoard[row][col] = num;
+              if (solve()) return true;
+              currentBoard[row][col] = 0;
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  solve();
+
+  drawBoard();
+  checkIfSolved();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  generateInitialBoard();
+});
